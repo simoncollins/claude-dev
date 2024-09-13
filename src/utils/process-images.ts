@@ -17,16 +17,20 @@ export async function selectImages(): Promise<string[]> {
 		return []
 	}
 
-	return await Promise.all(
-		fileUris.map(async (uri) => {
-			const imagePath = uri.fsPath
-			const buffer = await fs.readFile(imagePath)
-			const base64 = buffer.toString("base64")
-			const mimeType = getMimeType(imagePath)
-			const dataUrl = `data:${mimeType};base64,${base64}`
-			return dataUrl
-		})
-	)
+	const filePaths = fileUris.map(uri => uri.fsPath)
+    return await convertFilesToBase64(filePaths)
+}
+
+async function convertFilesToBase64(filePaths: string[]): Promise<string[]> {
+    return await Promise.all(
+        filePaths.map(async (filePath) => {
+            const buffer = await fs.readFile(filePath)
+            const base64 = buffer.toString("base64")
+            const mimeType = getMimeType(filePath)
+            const dataUrl = `data:${mimeType};base64,${base64}`
+            return dataUrl
+        })
+    )
 }
 
 function getMimeType(filePath: string): string {

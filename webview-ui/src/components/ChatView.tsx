@@ -15,6 +15,7 @@ import HistoryPreview from "./HistoryPreview"
 import TaskHeader from "./TaskHeader"
 import Thumbnails from "./Thumbnails"
 import { normalizeApiConfiguration } from "./ApiOptions"
+import useImageFileDrop from "../hooks/useImageFileDrop"
 
 interface ChatViewProps {
 	isHidden: boolean
@@ -367,6 +368,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					break
 				case "selectedImages":
 					const newImages = message.images ?? []
+					console.log("Selected images:", newImages)
 					if (newImages.length > 0) {
 						setSelectedImages((prevImages) =>
 							[...prevImages, ...newImages].slice(0, MAX_IMAGES_PER_MESSAGE)
@@ -456,8 +458,21 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		[expandedRows, modifiedMessages, visibleMessages.length]
 	)
 
+	const chatViewRef = useRef<HTMLDivElement>(null)
+
+	const handleDropImages = (base64Strings: string[]) => {
+		if (base64Strings.length > 0) {
+			setSelectedImages((prevImages) =>
+				[...prevImages, ...base64Strings].slice(0, MAX_IMAGES_PER_MESSAGE)
+			)
+		}
+	}
+
+	useImageFileDrop(chatViewRef, handleDropImages)
+
 	return (
 		<div
+			ref={chatViewRef}
 			style={{
 				position: "fixed",
 				top: 0,

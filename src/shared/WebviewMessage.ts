@@ -19,6 +19,7 @@ export interface WebviewMessage {
 		| "requestOllamaModels"
 		| "openImage"
 		| "openFile"
+		| "dropImages"
 	text?: string
 	askResponse?: ClaudeAskResponse
 	apiConfiguration?: ApiConfiguration
